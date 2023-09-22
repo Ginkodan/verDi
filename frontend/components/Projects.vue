@@ -1,5 +1,5 @@
 <script setup>
-const { data: projects, pending, error } = await useFetch(() => `http://localhost:3033/projects`)
+const { data: projects, pending, error } = await useFetch(() => `http://localhost:3033/getAllProjects`)
 </script>
 
 <template>

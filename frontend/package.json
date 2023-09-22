@@ -9,6 +9,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
+  "types": "module",
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "nuxt": "^3.7.3",

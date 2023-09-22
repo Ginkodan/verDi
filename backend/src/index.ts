@@ -1,29 +1,48 @@
 import axios from "axios";
 import "dotenv/config";
 import { postMessageToDiscord } from "./commands/postMessage";
-import { getProjects } from "./queries/getProjects";
+import { getRegisteredProjects } from "./queries/getRegisteredProjects";
+import { getSettings } from "./queries/getSettings";
+import { updateSettings } from "./commands/updateSettings";
+import { getProjectsFromVercel } from "./queries/getProjectsFromVercel";
+import { addNewProject } from "./queries/addNewProject";
 import express from "express";
 import cors from "cors";
+import { getProjectsFromDb, initDb } from "./lib/sqlite";
+import bodyParser from "body-parser";
+initDb();
 
 const app = express();
 app.use(cors());
+app.use(bodyParser.json());
 
 app.get("/", (req: any, res: any) => {
   res.send("Hello World!");
 });
 
-getProjects(app);
+getRegisteredProjects(app);
+getSettings(app);
+updateSettings(app);
+addNewProject(app);
+getProjectsFromVercel(app);
 
 app.listen(3033, () => {
   console.log("Example app listening on port 3033 !");
 });
 
 const VERCEL_TOKEN = process.env.VERCEL_TOKEN;
-const allowedDeployments = process.env.PROJECT_LIST?.split(",") || [];
 
 let processedDeployments = new Set();
 
+// TODO: find a better way to do this
 const getAllDeployments = async () => {
+  const allowedDeployments = await getProjectsFromDb();
+  const names = allowedDeployments.map((proj: any) => proj.name);
+
+  if (names.length === 0) {
+    return [];
+  }
+
   try {
     const response = await axios.get(
       "https://api.vercel.com/v6/deployments?limit=10",
@@ -35,7 +54,7 @@ const getAllDeployments = async () => {
       }
     );
     return response.data.deployments.filter((deployment: any) =>
-      allowedDeployments.includes(deployment.name)
+      names.includes(deployment.name)
     );
   } catch (error) {
     console.error(error);
@@ -79,7 +98,20 @@ const getDeploymentLogs = async (deploymentId: string) => {
 };
 
 const addAllDeploymentsToSet = async () => {
-  console.log(`initializing for **${allowedDeployments}**`);
+  const allowedDeployments = await getProjectsFromDb();
+
+  if (allowedDeployments.length === 0) {
+    //timeout to wait for db to be initialized
+    console.log("waiting for db to be initialized...");
+    setTimeout(() => {
+      addAllDeploymentsToSet();
+    }, 3000);
+    return;
+  }
+
+  const names = allowedDeployments.map((proj: any) => proj.name);
+
+  console.log(`initializing for **${names}**`);
   const allDeployments = await getAllDeployments();
   allDeployments.forEach((deployment: any) => {
     processedDeployments.add(deployment.uid);

@@ -6,6 +6,7 @@ export const postMessageToDiscord = async (message: string) => {
     await axios.post(DISCORD_WEBHOOK_URL, {
       content: message,
     });
+    console.log("bla");
   } catch (error) {
     console.error(error);
   }

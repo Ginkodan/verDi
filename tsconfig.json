@@ -1,10 +1,16 @@
 {
-  "ts-node": { "esm": true, "experimentalSpecifierResolution": "node" },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node",
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  },
   "compilerOptions": {
     "outDir": "dist",
     "moduleResolution": "node",
     "target": "es6",
-    "module": "commonjs",
+    "module": "ESNext",
     "esModuleInterop": true
   }
 }

@@ -2,7 +2,7 @@
 const props = defineProps({
     id: String,
 })
-const { data: project, pending, error } = await useFetch(() => `http://localhost:3033/projects/${props.id}`)
+//const { data: project, pending, error } = await useFetch(() => `http://localhost:3033/projects/${props.id}`)
 </script>
 
 <template>
