@@ -1,20 +1,9 @@
-import axios from "axios";
-import { getSettingsFromDb } from "../lib/sqlite";
+import { getProjectById as getProjectFromVercel } from "../vercel/getProjectById";
 
-export const getProjectById = async (id: number) => {
-  const settings = await getSettingsFromDb();
-  try {
-    const response = await axios.get(
-      `https://api.vercel.com/v9/projects/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${settings.vercelAPI}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
+export const getProjectById = async (app: any) => {
+  app.get("/getProjectById", async (req: any, res: any) => {
+    const { id } = req.query;
+    const project = await getProjectFromVercel(id);
+    return res.send(project);
+  });
 };

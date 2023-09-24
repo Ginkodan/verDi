@@ -4,12 +4,13 @@ import { postMessageToDiscord } from "./commands/postMessage";
 import { getRegisteredProjects } from "./queries/getRegisteredProjects";
 import { getSettings } from "./queries/getSettings";
 import { updateSettings } from "./commands/updateSettings";
-import { getProjectsFromVercel } from "./queries/getProjectsFromVercel";
 import { addNewProject } from "./queries/addNewProject";
+import { getProjectById } from "./queries/getProjectById";
 import express from "express";
 import cors from "cors";
 import { getProjectsFromDb, initDb } from "./lib/sqlite";
 import bodyParser from "body-parser";
+import { getProjectsFromVercel } from "./vercel/getProjectsFromVercel";
 initDb();
 
 const app = express();
@@ -25,6 +26,7 @@ getSettings(app);
 updateSettings(app);
 addNewProject(app);
 getProjectsFromVercel(app);
+getProjectById(app);
 
 app.listen(3033, () => {
   console.log("Example app listening on port 3033 !");
@@ -116,8 +118,6 @@ const addAllDeploymentsToSet = async () => {
   }
 
   const names = allowedDeployments.map((proj: any) => proj.name);
-
-  console.log("allowedDeployments", allowedDeployments);
 
   console.log(`initializing for **${names}**`);
   const allDeployments = await getAllDeployments();

@@ -1,5 +1,6 @@
 <script setup>
 const { data: projects, pending, error } = await useFetch(() => `http://localhost:3033/getRegisteredProjects`)
+const router = useRouter()
 </script>
 
 <template>
@@ -12,7 +13,7 @@ const { data: projects, pending, error } = await useFetch(() => `http://localhos
             </h1>
             <div class="flex flex-wrap gap-8 pt-6">
                 <div v-for="project in projects">
-                    <Card :name="project.name"></Card>
+                    <Card :name="project.name" @click="router.push(`/projects/project-${project.key}`)"></Card>
                 </div>
             </div>
         </div>

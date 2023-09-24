@@ -1,8 +1,9 @@
 <script setup>
-const props = defineProps({
-    id: String,
-})
-//const { data: project, pending, error } = await useFetch(() => `http://localhost:3033/projects/${props.id}`)
+
+
+const route = useRoute()
+
+const { data: project, pending, error } = await useFetch(() => `http://localhost:3033/getProjectById/?id=${route.params.id}`)
 </script>
 
 <template>
@@ -13,11 +14,6 @@ const props = defineProps({
             <h1 class="text-xl font-bold text-indigo-400">
                 {{ project.name }}
             </h1>
-            <div class="flex flex-wrap gap-8 pt-6">
-                <div v-for="project in projects">
-                    <Card :name="project"></Card>
-                </div>
-            </div>
         </div>
     </div>
 </template>
