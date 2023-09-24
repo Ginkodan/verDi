@@ -4,14 +4,14 @@ const { data: projects, pending, error } = await useFetch(() => `http://localhos
 const modal = ref(false)
 const project = ref(null)
 
-const onSave = async (projectId) => {
+const onSave = async (projectId, name) => {
     await fetch(`http://localhost:3033/addNewProject`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            projectId: projectId
+            projectId,
         })
     })
     modal.value = false

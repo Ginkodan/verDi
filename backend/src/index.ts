@@ -43,6 +43,11 @@ const getAllDeployments = async () => {
     return [];
   }
 
+  if (!VERCEL_TOKEN) {
+    console.error("VERCEL_TOKEN is not set");
+    return [];
+  }
+
   try {
     const response = await axios.get(
       "https://api.vercel.com/v6/deployments?limit=10",
@@ -58,6 +63,7 @@ const getAllDeployments = async () => {
     );
   } catch (error) {
     console.error(error);
+    return [];
   }
 };
 
@@ -111,8 +117,13 @@ const addAllDeploymentsToSet = async () => {
 
   const names = allowedDeployments.map((proj: any) => proj.name);
 
+  console.log("allowedDeployments", allowedDeployments);
+
   console.log(`initializing for **${names}**`);
   const allDeployments = await getAllDeployments();
+  if (allDeployments.length === 0) {
+    return;
+  }
   allDeployments.forEach((deployment: any) => {
     processedDeployments.add(deployment.uid);
   });

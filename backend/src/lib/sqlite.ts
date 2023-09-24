@@ -72,6 +72,21 @@ export const getProjectsFromDb = async (): Promise<any> => {
   });
 };
 
+export const getProjectFromDb = async (key: string): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    db.get(
+      `SELECT * FROM projectSettings WHERE key = ?`,
+      [key],
+      (err: any, row: any) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(row);
+      }
+    );
+  });
+};
+
 export const addNewProjectToDb = async (id: number) => {
   const project = await getProjectById(id);
 
